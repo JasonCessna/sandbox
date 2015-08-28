@@ -16,8 +16,10 @@ namespace TicTacToe
         bool isLocked = true; //IF START BUTTON HASN'T BEEN PUSHED, BUTTONS ARE NOT PLAYABLE
         bool isThreat = false; //IF DEFENSIVE THREAT IS GREATER THAN OFFENSIVE OPPORTUNITY
         bool turn = true; //TRUE == X TURN; FALSE == O TURN
+        bool custColor1 = false;  //if player chose a custom color for player 1
+        bool custColor2 = false;  //if player chose a custom color for player 2
         int turnCount = 0;
-
+        private NameList nameList;
 
         public Form1()
         {
@@ -32,17 +34,20 @@ namespace TicTacToe
                 if (turn)                //check player's turn
                 {
                     b.Text = "X";        //change box's text
-                    b.BackColor = System.Drawing.Color.SlateBlue;
+                    b.BackColor = System.Drawing.Color.SlateBlue; //default X color
+                    b.Tag = "X";
+                    
                 }
                 else
                 {
                     b.Text = "O";        //change box's text
-                    b.BackColor = System.Drawing.Color.YellowGreen;
+                    b.BackColor = System.Drawing.Color.YellowGreen;  //default O color
+                    b.Tag = "O";
                 }
-
+                ChangeColors(this);  //Check for custom color option and change defaults
                 turn = !turn;           //change turn
                 b.Enabled = false;      //turn button off
-                checkForWinner();       //check rows, columns, and diagonals
+                checkForWinner();       //check rows, columns, and diagnols
             }
             else MessageBox.Show("Press \"START\" to begin!");
         }
@@ -81,11 +86,11 @@ namespace TicTacToe
                 isWinner = true;
                 typeOfWin = "column";
             }
-            //check diagonals
+            //check diagnols
             else if (isDiag)
             {
                 isWinner = true;
-                typeOfWin = "diagonal";
+                typeOfWin = "diaganol";
             }
              else if (isDraw)
              {
@@ -163,6 +168,32 @@ namespace TicTacToe
             }
         }
 
+        protected void ChangeColors(Control root) //use with Edit -> Colors -> Player 1
+        {
+            if (custColor1 == true || custColor2 == true)
+            foreach (Control ctrl in root.Controls)
+            {
+                if (ctrl is Button)
+                {
+                    if (((Control)ctrl).Tag == "X")
+                    {
+                        ((Control)ctrl).BackColor = colorDialog1.Color;
+
+                    }                                                        //TEXT TO BE DIFFERENT ON EVERY BUTTON
+                    else if (((Control)ctrl).Tag == "O")
+                    {
+                        ((Control)ctrl).BackColor = colorDialog2.Color;
+                    }
+                    else
+                    {
+                        if (ctrl.Controls.Count > 0)
+                        {
+                            ChangeColors(ctrl);                            //RECURSIVELY CALL FUNCTION UNTIL ALL BUTTONS ARE ENABLED
+                        }
+                    }
+                }
+            }
+        }
 
        
         private bool Row()
@@ -326,6 +357,67 @@ namespace TicTacToe
             turnCount = 0;
             turn = true;
         }
-        
+
+        private void highScoresToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void playerVsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void playerVsPlayerToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            EnableButtons(this);
+        }
+
+        private void fontDialog1_Apply(object sender, EventArgs e)
+        {
+
+        }
+
+        private void player1ToolStripMenuItem_Click(object sender, EventArgs e) //Edit -> Colors -> Player 1
+        {
+            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
+                custColor1 = true;
+                ChangeColors(this);
+             }
+        }
+
+        private void player2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (colorDialog2.ShowDialog() == DialogResult.OK)
+            {
+                custColor2 = true;
+                ChangeColors(this);
+            }
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void player1ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            NameList nameList = new NameList();
+            nameList.ShowDialog();
+           // while (NameList.ActiveForm.Activated == 1) { }
+            string player1Name = NameList.getName();
+            p1ScoreLbl.Text = player1Name + "'s Score:";
+        }
+
+        private void player2ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            NameList nameList = new NameList();
+            nameList.ShowDialog();
+            // while (NameList.ActiveForm.Activated == 1) { }
+            string player2Name = NameList.getName();
+            p2ScoreLbl.Text = player2Name + "'s Score:";
+        }
     }
 }
